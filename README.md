@@ -32,28 +32,28 @@ A registered client (Student, Faculty or Staff) can make an order and pays for i
 ## Data Dictionary
 
 Person
-<img src="ITCS3160Pictures/person.jpg" >
+<img src="ITCS3160Pictures/person.png" >
 
 Faculty
-<img src="ITCS3160Pictures/faculty.jpg" >
+<img src="ITCS3160Pictures/faculty.png" >
 
 Staff
-<img src="ITCS3160Pictures/staff.jpg" >
+<img src="ITCS3160Pictures/staff.png" >
 
 Student
-<img src="ITCS3160Pictures/student.jpg" >
+<img src="ITCS3160Pictures/student.png" >
 
 Driver
-<img src="ITCS3160Pictures/drivers.jpg" >
+<img src="ITCS3160Pictures/drivers.png" >
 
 Location
-<img src="ITCS3160Pictures/location.jpg" >
+<img src="ITCS3160Pictures/location.png" >
 
 Order
-<img src="ITCS3160Pictures/orders.jpg" >
+<img src="ITCS3160Pictures/orders.png" >
 
 Restaurant
-<img src="ITCS3160Pictures/restaurant.jpg" >
+<img src="ITCS3160Pictures/restaurant.png" >
 
 
 
