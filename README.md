@@ -26,6 +26,37 @@ A registered client (Student, Faculty or Staff) can make an order and pays for i
 
  
 # EERD
+
+<img src="ITCS3160Pictures/ProjectERDiagram.jpg" >
+
+## Data Dictionary
+
+Person
+<img src="ITCS3160Pictures/person.jpg" >
+
+Faculty
+<img src="ITCS3160Pictures/faculty.jpg" >
+
+Staff
+<img src="ITCS3160Pictures/staff.jpg" >
+
+Student
+<img src="ITCS3160Pictures/student.jpg" >
+
+Driver
+<img src="ITCS3160Pictures/drivers.jpg" >
+
+Location
+<img src="ITCS3160Pictures/location.jpg" >
+
+Order
+<img src="ITCS3160Pictures/orders.jpg" >
+
+Restaurant
+<img src="ITCS3160Pictures/restaurant.jpg" >
+
+
+
 # MySQL Queries
 # Trigger
 # Stored Procedure
