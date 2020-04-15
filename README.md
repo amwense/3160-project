@@ -6,23 +6,23 @@ In light of events affecting the student mobility on campus, universities are wo
 A registered client (Student, Faculty or Staff) can make an order and pays for it. A restaurant can receive an order, confirm it an prepare the order. Then the driver (Student) pick us the prepared order and delivers it to the client. And to finish the client rates the driver.
 <img src="ITCS3160Pictures/UseCase.jpg" >
 # Business Rules
--Persons (campus faculty, staff, students) have accounts in the system.
+- Persons (campus faculty, staff, students) have accounts in the system.
 
--Locations are spots on campus where food can be delivered.
+- Locations are spots on campus where food can be delivered.
 
--Persons can also be drivers (delivery personnel which have to be approved). 
+- Persons can also be drivers (delivery personnel which have to be approved). 
 
--All delivery personnel are students.
+- All delivery personnel are students.
 
--There are 8 initial delivery drivers.
+- There are 8 initial delivery drivers.
 
--There is a flat fee of $5 for each delivery.
+- There is a flat fee of $5 for each delivery.
 
--A person orders food many times.
+- A person orders food many times.
 
--An individual delivery is tied to only one person for the order.
+- An individual delivery is tied to only one person for the order.
 
--The order is for only one restaurant.  
+- The order is for only one restaurant.  
 
  
 # EERD
@@ -62,8 +62,12 @@ Restaurant
 # Stored Procedure
 # Future Work
 # MySQL Dump
+
+'embed:Campus_Food_Delivery_Service.sql'
 ```sql
-// 3160-project/Campus_Food_Delivery_Service.sql
+// /Campus_Food_Delivery_Service.sql
 ```
-$ npx embedme README.md
+npx embedme README.md
+
+
 
