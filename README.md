@@ -63,6 +63,7 @@ Restaurant
 # Future Work
 # MySQL Dump
 ```sql
-// Campus_Food_Delivery_Service.sql
+// 3160-project/Campus_Food_Delivery_Service.sql
 ```
-npx embedme README.md
+$ npx embedme README.md
+
