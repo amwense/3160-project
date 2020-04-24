@@ -4,8 +4,11 @@ Member: Adona Mwense
 In light of events affecting the student mobility on campus, universities are working to see if they should have their own deliveries services to prevent the stream of individuals who have no ties to the university. Thus, ensuring authorized university employees are the only ones delivering food on campus for safety and health reasons. Given certain requirement, I design a fully normalized database system using business rules, entity relationship diagramming, normalization and schema design modeling this system.
 # Use Case
 A registered client (Student, Faculty or Staff) can make an order and pays for it. A restaurant can receive an order, confirm it an prepare the order. Then the driver (Student) pick us the prepared order and delivers it to the client. And to finish the client rates the driver.
+
 <img src="ITCS3160Pictures/UseCase.jpg" >
+
 # Business Rules
+
 - Persons (campus faculty, staff, students) have accounts in the system.
 
 - Locations are spots on campus where food can be delivered.
@@ -54,12 +57,90 @@ Order
 
 Restaurant
 <img src="ITCS3160Pictures/restaurant.png" >
+```sql
 
+```
 
 
 # MySQL Queries
 # Trigger
+Since person has to be either a faculty, a staff or a student. It seems logical to insert have a trigger that insert a faculty, staff or student in the person table before inserting them in their respective table.
+
+Faculty
+```sql
+CREATE DEFINER=`root`@`localhost` TRIGGER `faculty_BEFORE_INSERT` 
+BEFORE INSERT ON `faculty` FOR EACH ROW 
+BEGIN
+	   insert into person
+    values(new.idFaculty, new.name, new.email, new.phone_number);
+END
+```
+Staff
+```sql
+CREATE DEFINER=`root`@`localhost` TRIGGER `staff_BEFORE_INSERT` 
+BEFORE INSERT ON `staff` FOR EACH ROW 
+BEGIN
+	   insert into person
+    values(new.idStaff, new.name, new.email, new.phone_number);
+END
+```
+Student
+```sql
+CREATE DEFINER=`root`@`localhost` TRIGGER `student_BEFORE_INSERT` 
+BEFORE INSERT ON `student` FOR EACH ROW 
+BEGIN
+	   insert into person
+    values(new.idStudent, new.name, new.email, new.phone_number);
+END
+```
 # Stored Procedure
+Based on the content of the database some recurring queries might be to try to find who made specific deliveries, what orders a specific client has made or what group of peoples (student, faculty, or staff) makes the most order etc. Upon this, it was decided to include some of the queries as stored procedures.
+```sql
+CREATE DEFINER=`root`@`localhost` PROCEDURE `deliveries_made`(IN i_driver_id INT)
+    READS SQL DATA
+BEGIN
+	select drivers.name as Delivery_Driver, person.name as Client, idOrders
+	from orders
+	join drivers
+	on orders.driver_id = drivers.idDrivers
+	join person
+	on orders.client_id = person.idPerson
+	where driver_id = i_driver_id;
+END
+```
+## Views
+While keeping the same idea as for stored procedures and the concept that view are generally used for reporting purposes, it was decided views limiting the number of information about the people in the database to the strict necessary could be helpful in addition to a similar table about the orders made. 
+```sql
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `orders_made` AS
+    SELECT 
+        `person`.`name` AS `Client_Name`,
+        `restaurants`.`name` AS `Restaurant`,
+        `orders`.`price` AS `Total_Price`
+    FROM
+        ((`orders`
+        JOIN `person` ON ((`orders`.`client_id` = `person`.`idPerson`)))
+        JOIN `restaurants` ON ((`orders`.`restaurant_id` = `restaurants`.`idRestaurants`)))
+```
+
+```sql
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `orders_made` AS
+    SELECT 
+        `person`.`name` AS `Client_Name`,
+        `restaurants`.`name` AS `Restaurant`,
+        `orders`.`price` AS `Total_Price`
+    FROM
+        ((`orders`
+        JOIN `person` ON ((`orders`.`client_id` = `person`.`idPerson`)))
+        JOIN `restaurants` ON ((`orders`.`restaurant_id` = `restaurants`.`idRestaurants`)))
+```
 # Future Work
 # MySQL Dump
 ```sql
