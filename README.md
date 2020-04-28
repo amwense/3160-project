@@ -57,12 +57,37 @@ Order
 
 Restaurant
 <img src="ITCS3160Pictures/restaurant.png" >
-```sql
-
-```
 
 
 # MySQL Queries
+As a demonstration of how the tables work together here are some simple queries. The first return information about order that were made by students who are registered as drivers in the system. The second query returns how many students from each major made an order. And the last query is simply return the most common locations where faculty orders were delivered to.
+
+Query 1
+```sql
+select student.name as Client, rest.name as Restaurant_Name, idOrders as Order_ID, price as Total
+from orders
+inner join student on orders.client_id = student.idStudent
+inner join restaurants as rest on orders.restaurant_id = rest.idRestaurants
+where client_id IN (select idDrivers from drivers)
+order by price desc;
+```
+Query 2
+```sql
+select major as Student_Major, count(major) as Total
+from student
+inner join orders on student.idStudent = orders.client_id
+group by major
+order by Total desc;
+```
+Query 3
+```sql
+select loc.location_name as Location_Name, count(loc.location_name) as Total
+from orders
+inner join locations as loc on orders.location_id = loc.idLocations
+where orders.client_id In (select idFaculty from faculty)
+group by loc.location_name
+order by Total;
+```
 # Trigger
 Since person has to be either a faculty, a staff or a student. It seems logical to insert have a trigger that insert a faculty, staff or student in the person table before inserting them in their respective table.
 
@@ -142,6 +167,7 @@ VIEW `orders_made` AS
         JOIN `restaurants` ON ((`orders`.`restaurant_id` = `restaurants`.`idRestaurants`)))
 ```
 # Future Work
+Considering that this project is only a prototype, there would be quite a few ways to amend to it. For instance, ameliorations can be made in order for the database to be operational in the context of food delivery. A table relating restaurant to menus and might be necessary. In addition to that, there could be various delivery fees depending on the distance between the restaurant and the drop off location. Lastly, it would be good to have an user interface to see how a potential users can interact with the database in a working environment depending on their roles.
 # MySQL Dump
 ```sql
 // Campus_Food_Delivery_Service.sql
