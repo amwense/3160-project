@@ -162,6 +162,9 @@ VIEW `person_info` AS
     FROM
         `person`
 ```
+## Indexes
+As the main purpose of indexes is to make query run faster, I did not judge the necessity of creating them for this particular database. Index are more useful in databases that contains a large number of information in diverse table. In large databases, running complex or advanced queries will take longer time compared to a much smaller database. Since this database is small it wouldn’t be much of an improvement to add a table that refers to tables already in the database.
+
 # Future Work
 Considering that this project is only a prototype, there would be quite a few ways to amend to it. For instance, ameliorations can be made in order for the database to be operational in the context of food delivery. A table relating restaurant to menus and might be necessary. In addition to that, there could be various delivery fees depending on the distance between the restaurant and the drop off location. Lastly, it would be good to have an user interface to see how a potential users can interact with the database in a working environment depending on their roles.
 # MySQL Dump
