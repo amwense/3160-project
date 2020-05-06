@@ -1,5 +1,6 @@
 # ITCS 3160 Project
 Member: Adona Mwense
+Video Link: [Click Here](https://www.youtube.com/watch?v=QTpLv8EZmrs)
 # Introduction
 In light of events affecting the student mobility on campus, universities are working to see if they should have their own deliveries services to prevent the stream of individuals who have no ties to the university. Thus, ensuring authorized university employees are the only ones delivering food on campus for safety and health reasons. Given certain requirement, I design a fully normalized database system using business rules, entity relationship diagramming, normalization and schema design modeling this system.
 # Use Case
@@ -134,23 +135,7 @@ BEGIN
 END
 ```
 ## Views
-While keeping the same idea as for stored procedures and the concept that view are generally used for reporting purposes, it was decided views limiting the number of information about the people in the database to the strict necessary could be helpful in addition to a similar table about the orders made. 
-```sql
-CREATE 
-    ALGORITHM = UNDEFINED 
-    DEFINER = `root`@`localhost` 
-    SQL SECURITY DEFINER
-VIEW `orders_made` AS
-    SELECT 
-        `person`.`name` AS `Client_Name`,
-        `restaurants`.`name` AS `Restaurant`,
-        `orders`.`price` AS `Total_Price`
-    FROM
-        ((`orders`
-        JOIN `person` ON ((`orders`.`client_id` = `person`.`idPerson`)))
-        JOIN `restaurants` ON ((`orders`.`restaurant_id` = `restaurants`.`idRestaurants`)))
-```
-
+While keeping the same idea as for stored procedures and the concept that view are generally used for reporting purposes, it was decided views limiting the number of information about the people in the database to the strict necessary could be helpful. The first view returns basic information about a person and whether or not that person has made an order (Active) or not (Inactive). In addition to that the second view classify orders as either Premium Plus, Premium or Regular depending on the total of the order.
 ```sql
 CREATE 
     ALGORITHM = UNDEFINED 
@@ -158,9 +143,48 @@ CREATE
     SQL SECURITY DEFINER
 VIEW `person_info` AS
     SELECT 
-        `person`.`name` AS `name`, `person`.`email` AS `email`
+        `person`.`name` AS `name`,
+        `person`.`email` AS `email`,
+        (CASE
+            WHEN
+                `person`.`idPerson` IN (SELECT 
+                        `orders`.`client_id`
+                    FROM
+                        `orders`)
+            THEN
+                'Active'
+            ELSE 'Inactive'
+        END) AS `ClientStatus`
     FROM
         `person`
+    ORDER BY (CASE
+        WHEN
+            `person`.`idPerson` IN (SELECT 
+                    `orders`.`client_id`
+                FROM
+                    `orders`)
+        THEN
+            'Active'
+        ELSE 'Inactive'
+    END)
+```
+
+```sql
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `orders_rank` AS
+    SELECT 
+        `orders`.`idOrders` AS `idOrders`,
+        (CASE
+            WHEN (`orders`.`price` >= 70) THEN 'Premium Plus'
+            WHEN (`orders`.`price` >= 40) THEN 'Premium'
+            ELSE 'Regular'
+        END) AS `PurchaseRank`
+    FROM
+        `orders`
+    ORDER BY `orders`.`price` DESC
 ```
 ## Indexes
 As the main purpose of indexes is to make query run faster, I did not judge the necessity of creating them for this particular database. Index are more useful in databases that contains a large number of information in diverse table. In large databases, running complex or advanced queries will take longer time compared to a much smaller database. Since this database is small it wouldn’t be much of an improvement to add a table that refers to tables already in the database.
@@ -328,17 +352,16 @@ INSERT INTO `orders` VALUES (45678,771300,123486,781227,987666,20,5,'11:00:23'),
 UNLOCK TABLES;
 
 --
--- Temporary view structure for view `orders_made`
+-- Temporary view structure for view `orders_rank`
 --
 
-DROP TABLE IF EXISTS `orders_made`;
-/*!50001 DROP VIEW IF EXISTS `orders_made`*/;
+DROP TABLE IF EXISTS `orders_rank`;
+/*!50001 DROP VIEW IF EXISTS `orders_rank`*/;
 SET @saved_cs_client     = @@character_set_client;
 /*!50503 SET character_set_client = utf8mb4 */;
-/*!50001 CREATE VIEW `orders_made` AS SELECT 
- 1 AS `Client_Name`,
- 1 AS `Restaurant`,
- 1 AS `Total_Price`*/;
+/*!50001 CREATE VIEW `orders_rank` AS SELECT 
+ 1 AS `idOrders`,
+ 1 AS `PurchaseRank`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -377,7 +400,8 @@ SET @saved_cs_client     = @@character_set_client;
 /*!50503 SET character_set_client = utf8mb4 */;
 /*!50001 CREATE VIEW `person_info` AS SELECT 
  1 AS `name`,
- 1 AS `email`*/;
+ 1 AS `email`,
+ 1 AS `ClientStatus`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -563,10 +587,10 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
--- Final view structure for view `orders_made`
+-- Final view structure for view `orders_rank`
 --
 
-/*!50001 DROP VIEW IF EXISTS `orders_made`*/;
+/*!50001 DROP VIEW IF EXISTS `orders_rank`*/;
 /*!50001 SET @saved_cs_client          = @@character_set_client */;
 /*!50001 SET @saved_cs_results         = @@character_set_results */;
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
@@ -575,7 +599,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `orders_made` AS select `person`.`name` AS `Client_Name`,`restaurants`.`name` AS `Restaurant`,`orders`.`price` AS `Total_Price` from ((`orders` join `person` on((`orders`.`client_id` = `person`.`idPerson`))) join `restaurants` on((`orders`.`restaurant_id` = `restaurants`.`idRestaurants`))) */;
+/*!50001 VIEW `orders_rank` AS select `orders`.`idOrders` AS `idOrders`,(case when (`orders`.`price` >= 70) then 'Premium Plus' when (`orders`.`price` >= 40) then 'Premium' else 'Regular' end) AS `PurchaseRank` from `orders` order by `orders`.`price` desc */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -593,7 +617,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `person_info` AS select `person`.`name` AS `name`,`person`.`email` AS `email` from `person` */;
+/*!50001 VIEW `person_info` AS select `person`.`name` AS `name`,`person`.`email` AS `email`,(case when `person`.`idPerson` in (select `orders`.`client_id` from `orders`) then 'Active' else 'Inactive' end) AS `ClientStatus` from `person` order by (case when `person`.`idPerson` in (select `orders`.`client_id` from `orders`) then 'Active' else 'Inactive' end) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -607,6 +631,6 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-04 20:02:48
+-- Dump completed on 2020-05-05 21:43:52
 
 ```
